@@ -9,12 +9,15 @@ reserved={
    '*' : 'MULT',
    '/' : 'DIV',
    '(' : 'LPAREN',
-   ')' : 'RPAREN'
+   ')' : 'RPAREN',
+   '[' : 'LBRACKET',
+   ']' : 'RBRACKET'
 }
 
 tokens = [
     'N',
-    'ID'
+    'ID',
+    'STRING',
     ]+list(reserved.values())
 
 t_SU = r'\+'
@@ -24,6 +27,8 @@ t_DIV = r'\/'
 t_ASIGN = r'\='
 t_LPAREN  = r'\('
 t_RPAREN  = r'\)'
+t_LBRACKET  = r'\['
+t_RBRACKET  = r'\]'
 
 t_ignore = ' \t'
 
@@ -35,6 +40,11 @@ def t_N(t):
 def t_ID(t):
     r'[a-zA-Z_][a-zA-Z_0-9]*'
     t.type = reserved.get(t.value,'ID')
+    return t
+
+def t_STRING(t):
+    r'\"(\s*\w*\s*)\"'
+    t.type = reserved.get(t.value,'STRING')
     return t
 
 def t_error(t):
@@ -57,8 +67,9 @@ def p_asignacion(t):
     'resultado : ID ASIGN s'
     variables[t[1]]=t[3]
 
-def p_expr_num(t):
-    's : N'
+def p_expr_num_str(t):
+    '''s : N
+        | STRING'''
     t[0]=t[1]
     
 def p_expr_id(t):
@@ -74,8 +85,12 @@ def p_oper(t):
         |  s RE s
         |  s MULT s
         |  s DIV s'''
+    
     if t[2] == '+':
-        t[0] = t[1] + t[3]
+        if type(t[1]) == type(t[3]) and type(t[1]) == str:
+            t[0] = str(t[1][:-1] + t[3][1:])
+        else:
+            t[0] = t[1] + t[3]
     elif t[2] == '-':
         t[0] = t[1] - t[3]
     elif t[2] == '*':
