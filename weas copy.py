@@ -87,8 +87,7 @@ def p_resultado(t):
     print(t[1])
 
 def p_asignacion(t):
-    's : ID ASIGN s'
-    #print("aaaaaaaaaaa")
+    'resultado : ID ASIGN s'
     variables[t[1]]=t[3]
 
 def p_expr_str(t):
@@ -148,20 +147,16 @@ def p_comp(t):
 
 def p_statement_if(p):
     '''s : IF LPAREN comp RPAREN oper
-        |  IF LPAREN comp RPAREN oper ELSE oper'''
-    print("holaa")
-    for i in range(len(p)):
-        print(i, p[i])
+        |  IF LPAREN comp RPAREN resultado
+        |  IF LPAREN comp RPAREN resultado ELSE resultado'''
+    print(p[3], "Esto es p3")
     if p[3]:
-        print("entre")
-        
         p[0] = p[5]
-        print(p[0])
         
     else:
         i=len(p)
         if i >= 7:
-            print("entrooooo",p[7])
+            print(p[7])
             p[0] = p[7]
 
 def p_str(t):
@@ -188,3 +183,4 @@ while True:
     except EOFError:
         break
     parser.parse(data)
+    
